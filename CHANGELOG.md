@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added
+
+- Hardware Test app: checks the OLED, PN532, SD card (mount and
+  read/write), CC1101, NRF24, IR receiver and buzzer, and shows PASS or
+  FAIL with a hint at the cause. Results are also logged on Serial.
+- Minimal drivers for the CC1101 (VERSION register), the NRF24
+  (read-only presence check) and the IR receiver (edge counter).
+
 ## [0.1.0] - 2026-10-29
 
 Stage 0: Foundation.
