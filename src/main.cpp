@@ -2,6 +2,7 @@
 
 #include <Arduino.h>
 
+#include "apps/hardware_test/hardware_test_app.h"
 #include "apps/placeholder/placeholder_app.h"
 #include "config.h"
 #include "core/app_manager.h"
@@ -17,8 +18,9 @@ static Buzzer buzzer;
 static StorageManager storage;
 static AppManager appManager(display);
 
+static HardwareTestApp hardwareTestApp(display, storage);
+
 // Stand-ins for the apps of later stages; each is replaced when its stage starts.
-static PlaceholderApp hardwareTestApp(display, "Hardware Test");
 static PlaceholderApp subGhzApp(display, "Sub-GHz");
 static PlaceholderApp nfcApp(display, "NFC");
 static PlaceholderApp infraredApp(display, "Infrared");

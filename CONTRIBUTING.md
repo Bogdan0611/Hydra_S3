@@ -27,7 +27,8 @@ stage can be traced from plan to release.
 - **Types:** `feat`, `fix`, `docs`, `refactor`, `test`, `build`, `ci`,
   `chore`.
 - **Scopes:** `core`, `display`, `input`, `storage`, `buzzer`, `menu`,
-  `subghz`, `nfc`, `ir`, `ble`, `wifi`, `nrf24`, `usb-hid`, `hw`.
+  `hw-test`, `subghz`, `nfc`, `ir`, `ble`, `wifi`, `nrf24`, `usb-hid`,
+  `hw`.
 - **Summary:** imperative mood, lower case, no trailing period, at most
   72 characters.
 - **Body:** explain *why* when it is not obvious. State the test status,
