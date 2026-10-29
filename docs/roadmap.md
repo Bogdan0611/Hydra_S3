@@ -23,7 +23,7 @@ remotes, cards, networks and computers.
 
 ---
 
-## [ ] Stage 0 — Foundation
+## [x] Stage 0 — Foundation
 
 **Scope:**
 - **Repository:** `platformio.ini`, `.gitignore`, `.clang-format`,
@@ -36,7 +36,7 @@ remotes, cards, networks and computers.
   the menu.
 
 **Done when:**
-- [ ] The CI build is green on `main`.
+- [x] The CI build is green on `main`.
 - [x] Boot prints `[OK]` / `[ERROR]` for every component on Serial.
 - [x] The menu is navigable with the joystick; the selected row is readable
       (inverted text).
