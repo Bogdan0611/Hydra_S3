@@ -195,8 +195,9 @@ serves the main menu and every app, so the fix lives in one place.
 - Each driver uses its own `SPISettings` inside
   `beginTransaction()` / `endTransaction()`, so no device inherits another
   one's clock or mode.
-- **Safe clocks on jumper wires:** ~4 MHz for CC1101 and NRF24, ~10 MHz for
-  SD. Raise them only after testing proves stability.
+- **Safe clocks on jumper wires:** ~4 MHz for CC1101, NRF24 and SD. At
+  10 MHz the SD card mounted only intermittently on the bench (FAT volume
+  not found). Raise them only after testing proves stability.
 - **SmartRC-CC1101 manages SPI itself.** Call `setSpiPin()` before
   `Init()`. Once the CC1101 and the SD card are both integrated, verify
   explicitly that both still respond (init order may matter).
