@@ -28,6 +28,9 @@ public:
     /// Draws a filled rectangle.
     void drawBox(int x, int y, int width, int height);
 
+    /// Draws a filled triangle.
+    void drawTriangle(int x0, int y0, int x1, int y1, int x2, int y2);
+
     /// Sends the frame buffer to the OLED. A full frame is ~1 KB over I2C,
     /// so callers only call this when the screen content has changed.
     void show();

@@ -54,6 +54,10 @@ void DisplayManager::drawBox(int x, int y, int width, int height) {
     u8g2_.drawBox(x, y, width, height);
 }
 
+void DisplayManager::drawTriangle(int x0, int y0, int x1, int y1, int x2, int y2) {
+    u8g2_.drawTriangle(x0, y0, x1, y1, x2, y2);
+}
+
 void DisplayManager::show() {
     // Without an OLED every transfer would only produce I2C errors.
     if (!ready_) {
