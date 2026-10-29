@@ -5,8 +5,10 @@
 #include "config.h"
 #include "core/bus_manager.h"
 #include "core/display_manager.h"
+#include "core/input_manager.h"
 
 static DisplayManager display;
+static InputManager input;
 
 // Returns false if the PSRAM was not detected.
 static bool logMemory() {
@@ -40,6 +42,9 @@ static int bootComponents() {
     } else {
         failures++;
     }
+    if (!input.begin()) {
+        failures++;
+    }
     if (!logMemory()) {
         failures++;
     }
@@ -55,4 +60,9 @@ void setup() {
     Serial.printf("[INFO] Boot finished with %d error(s)\n", failures);
 }
 
-void loop() {}
+void loop() {
+    InputEvent event = input.poll();
+    if (event != InputEvent::None) {
+        Serial.printf("[INFO] Input event %d\n", static_cast<int>(event));
+    }
+}
