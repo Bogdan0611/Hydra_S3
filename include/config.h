@@ -13,6 +13,7 @@ constexpr uint32_t I2C_CLOCK_HZ = 400000;
 // proves them stable
 constexpr uint32_t SD_SPI_CLOCK_HZ = 4000000;
 constexpr uint32_t CC1101_SPI_CLOCK_HZ = 4000000;
+constexpr uint32_t NRF24_SPI_CLOCK_HZ = 4000000;
 
 // 7-bit address; some SSD1306 modules use 0x3D
 constexpr uint8_t OLED_I2C_ADDRESS = 0x3C;
