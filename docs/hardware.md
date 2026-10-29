@@ -34,6 +34,10 @@ pin (and GND).
 - **One source at a time:** switch the bench supply off while the board is
   on USB. Two supplies on the same 3V3 node usually cause no harm, but they
   add an unnecessary variable when debugging.
+- **USB alone is enough for stage 0,** with a good cable. Long or thin
+  cables dropped enough voltage to cause a reset loop at boot
+  (`rst:0xf (BROWNOUT_RST)` on Serial) and a flickering screen; a
+  medium-length, thick cable fixed it.
 
 ### 2.2 Planned setup (parts not arrived)
 
@@ -248,10 +252,10 @@ GDO2) are optional for most features and can be freed.
 
 - **Powered from 3V3;** the module's own transistor drives the buzzer, so
   the GPIO only supplies the base current.
-- **Still unknown:** active or passive, and active-HIGH or active-LOW.
-  Many modules with a PNP transistor (S8550) are active-LOW. Identify it at
-  first boot (section 6). The code keeps the active level as a constant and
-  returns the pin to its idle level after every sound.
+- **Active-HIGH,** identified at first boot: silent with the pin LOW,
+  clicks on every key press (`BUZZER_ACTIVE_HIGH = true` in `config.h`).
+  Whether the buzzer itself is active or passive is still unknown; the PWM
+  drive works for both.
 
 ### 4.9 5-way joystick + SET button
 
@@ -291,6 +295,7 @@ Until then, the expected results are:
 
 | Check | Pass | If it fails |
 |---|---|---|
+| Power | no `rst:0xf (BROWNOUT_RST)` on Serial at boot | supply too weak → shorter, thicker USB cable (see 2.1) |
 | I2C scan | `0x3C` (OLED) and `0x24` (PN532) found | PN532 missing → mode switches; nothing found → SDA/SCL swapped |
 | MicroSD | mounts; card type and size printed | card not FAT32, wrong CS, MISO wire |
 | CC1101 | VERSION register reads `0x14` (older chips: `0x04`) | `0x00`/`0xFF` → no SPI communication: CSN, MISO, supply |

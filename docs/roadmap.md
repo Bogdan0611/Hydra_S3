@@ -23,27 +23,28 @@ remotes, cards, networks and computers.
 
 ---
 
-## [ ] Stage 0 — Foundation
+## [x] Stage 0 — Foundation
 
 **Scope:**
 - **Repository:** `platformio.ini`, `.gitignore`, `.clang-format`,
   `README.md`, `CONTRIBUTING.md`, `CHANGELOG.md`.
-- **CI:** a GitHub Actions workflow that runs `pio run` on every push and
-  pull request, with a build-status badge in the README.
+- **CI:** a GitHub Actions workflow that runs `pio run` on every pull
+  request and every push to `main`, with a build-status badge in the
+  README.
 - **Firmware:** `include/pins.h`, `include/config.h`, everything in
   `src/core/` (see `docs/architecture.md`), and an empty placeholder app in
   the menu.
 
 **Done when:**
-- [ ] The CI build is green on `main`.
-- [ ] Boot prints `[OK]` / `[ERROR]` for every component on Serial.
-- [ ] The menu is navigable with the joystick; the selected row is readable
+- [x] The CI build is green on `main`.
+- [x] Boot prints `[OK]` / `[ERROR]` for every component on Serial.
+- [x] The menu is navigable with the joystick; the selected row is readable
       (inverted text).
-- [ ] The list scrolls correctly with more than 5 (test) entries.
-- [ ] Short beep on key press, using the identified buzzer active level.
-- [ ] The SD card is detected and its folders are created; without a card
+- [x] The list scrolls correctly with more than 5 (test) entries.
+- [x] Short beep on key press, using the identified buzzer active level.
+- [x] The SD card is detected and its folders are created; without a card
       the menu still works.
-- [ ] Free internal heap and PSRAM are printed at boot.
+- [x] Free internal heap and PSRAM are printed at boot.
 
 ---
 

@@ -50,6 +50,7 @@ rather than worked around.
     │   └── ir_transceiver.*
     └── apps/                  # one folder per menu app
         ├── app.h              # common App interface
+        ├── placeholder/       # stand-in for apps of later stages
         ├── hardware_test/
         ├── subghz/
         ├── nfc/
@@ -84,6 +85,8 @@ duplicating it.
 ```
 
 Each step logs `[OK] <component>` or `[ERROR] <component>: <reason>`.
+If a step failed, a notice replaces the menu until the next button press:
+a missing SD card is named, any other error points to the Serial log.
 
 ---
 
@@ -138,9 +141,10 @@ follow.
 ### 5.2 `DisplayManager`
 
 - **U8g2 full-buffer driver:** `U8G2_SSD1306_128X64_NONAME_F_HW_I2C`.
-- **Redraws only when state changes** (a dirty flag). A full frame is
-  ~1 KB over I2C; redrawing continuously would starve the PN532, which
-  shares the bus.
+- **Redraws only when state changes.** The menu and each app keep a
+  `needsRedraw_` flag and call `show()` only when it is set. A full frame
+  is ~1 KB over I2C (~25 ms at 400 kHz); redrawing continuously would
+  starve the PN532, which shares the bus.
 - **`drawText(x, y, text, inverted)`:** `inverted = true` draws with the
   pixels cleared (`setDrawColor(0)`), then restores the draw color.
 
@@ -174,7 +178,14 @@ serves the main menu and every app, so the fix lives in one place.
 - **The active level (HIGH or LOW) is a constant in `config.h`,** set after
   the first-boot check (`docs/hardware.md`, section 6). The pin returns to
   its idle level after every sound.
-- Sounds use `tone()`, which works with both active and passive buzzers.
+- Sounds use the LEDC PWM peripheral directly (`ledcWriteTone()`), which
+  works with both active and passive buzzers. `tone()` is not used: it
+  leaves the pin LOW after every sound (an active-LOW module would keep
+  sounding) and ends sounds from a separate FreeRTOS task. For an
+  active-LOW module the LEDC output is inverted (`ledcOutputInvert()`), so
+  silence (duty 0) is HIGH.
+- Sounds never block: `update()`, called from `loop()`, ends each one on
+  time.
 
 ---
 
@@ -186,8 +197,9 @@ serves the main menu and every app, so the fix lives in one place.
 - Each driver uses its own `SPISettings` inside
   `beginTransaction()` / `endTransaction()`, so no device inherits another
   one's clock or mode.
-- **Safe clocks on jumper wires:** ~4 MHz for CC1101 and NRF24, ~10 MHz for
-  SD. Raise them only after testing proves stability.
+- **Safe clocks on jumper wires:** ~4 MHz for CC1101, NRF24 and SD. At
+  10 MHz the SD card mounted only intermittently on the bench (FAT volume
+  not found). Raise them only after testing proves stability.
 - **SmartRC-CC1101 manages SPI itself.** Call `setSpiPin()` before
   `Init()`. Once the CC1101 and the SD card are both integrated, verify
   explicitly that both still respond (init order may matter).
@@ -256,7 +268,7 @@ build_flags =
 
 ; Libraries are added only when the stage that needs them starts.
 lib_deps =
-    olikraus/U8g2
+    olikraus/U8g2@^2.36.18
 ```
 
 - **Flashing and Serial use the COM port.** Native USB stays free for the
@@ -271,7 +283,7 @@ lib_deps =
 
 | Module | Library | `lib_deps` | Notes |
 |---|---|---|---|
-| OLED | U8g2 | `olikraus/U8g2` | — |
+| OLED | U8g2 | `olikraus/U8g2@^2.36.18` | — |
 | CC1101 | SmartRC-CC1101-Driver-Lib **3.0.2** | `lsatan/SmartRC-CC1101-Driver-Lib@^3.0.2` | Rewritten in 2026 with an object API (`SmartRC_CC1101 radio;`); 3.0.2 adds core 3.x compatibility. Header: `SmartRC_CC1101.h` |
 | PN532 | Adafruit PN532 | `adafruit/Adafruit PN532` | I2C mode, address `0x24` |
 | NRF24 | RF24 | `nrf24/RF24` | — |
