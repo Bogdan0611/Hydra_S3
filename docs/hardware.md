@@ -63,7 +63,7 @@ Available: two to three usable 1000 µF electrolytics, plus a kit up to
 
 | Location | Capacitor | When | Why |
 |---|---|---|---|
-| NRF24 VCC/GND, soldered at the module pins | **1000 µF** + 100 nF | before the NRF24 stage (mandatory) | The PA draws ~115 mA bursts; the unshielded module is the most supply-sensitive part |
+| NRF24 VCC/GND, soldered at the module pins | **1000 µF** + 100 nF | fitted | The PA draws ~115 mA bursts; the unshielded module is the most supply-sensitive part |
 | Main 3V3 rail, at the board's 3V3/GND pins | **1000 µF** + 100 nF | now | Buffers Wi-Fi TX peaks (300 mA+). Same node as the future LDO output |
 | CC1101 VCC/GND | 10 µF + 100 nF | before the Sub-GHz stage | Low current (~30 mA TX); a small local cap is enough |
 | Third 1000 µF, 470 µF | spare | — | Fallback if a 1000 µF does not fit or fails the check below |
@@ -269,8 +269,7 @@ GDO2) are optional for most features and can be freed.
 ### 5.1 To do (in order)
 
 1. **Main rail:** 1000 µF + 100 nF at the board's 3V3/GND pins.
-2. **NRF24:** 1000 µF + 100 nF at the module pins. Mandatory before the
-   NRF24 stage.
+2. **NRF24:** 1000 µF + 100 nF at the module pins. **Done.**
 3. **CC1101:** 10 µF + 100 nF at the module pins.
 4. **Optional:** 10 kΩ pull-ups on CS 10 and CS 14, so no SPI module is
    selected while the ESP32 boots. The firmware drives all CS pins HIGH
