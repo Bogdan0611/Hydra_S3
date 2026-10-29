@@ -174,7 +174,14 @@ serves the main menu and every app, so the fix lives in one place.
 - **The active level (HIGH or LOW) is a constant in `config.h`,** set after
   the first-boot check (`docs/hardware.md`, section 6). The pin returns to
   its idle level after every sound.
-- Sounds use `tone()`, which works with both active and passive buzzers.
+- Sounds use the LEDC PWM peripheral directly (`ledcWriteTone()`), which
+  works with both active and passive buzzers. `tone()` is not used: it
+  leaves the pin LOW after every sound (an active-LOW module would keep
+  sounding) and ends sounds from a separate FreeRTOS task. For an
+  active-LOW module the LEDC output is inverted (`ledcOutputInvert()`), so
+  silence (duty 0) is HIGH.
+- Sounds never block: `update()`, called from `loop()`, ends each one on
+  time.
 
 ---
 

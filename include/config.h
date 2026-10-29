@@ -14,3 +14,8 @@ constexpr uint8_t OLED_I2C_ADDRESS = 0x3C;
 
 // How long a button level must stay unchanged before it counts
 constexpr uint32_t BUTTON_DEBOUNCE_MS = 30;
+
+// Level that switches the buzzer module on. Not yet identified: see
+// docs/hardware.md, section 6. If an active buzzer sounds continuously
+// while idle, this value is wrong.
+constexpr bool BUZZER_ACTIVE_HIGH = true;
