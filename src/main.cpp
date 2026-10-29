@@ -2,6 +2,8 @@
 
 #include <Arduino.h>
 
+#include "config.h"
+
 static void logMemory() {
     Serial.printf("[INFO] Free heap: %lu KB internal\n", ESP.getFreeHeap() / 1024);
 
@@ -14,7 +16,7 @@ static void logMemory() {
 }
 
 void setup() {
-    Serial.begin(115200);
+    Serial.begin(SERIAL_BAUD);
     Serial.println();
     Serial.println("Booting...");
 
