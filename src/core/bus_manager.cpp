@@ -48,3 +48,10 @@ bool BusManager::begin() {
     bool spiStarted = beginSpi();
     return i2cStarted && spiStarted;
 }
+
+bool BusManager::isI2cDevicePresent(uint8_t address) {
+    // An empty write: a present device acknowledges its address, then the
+    // transfer ends. endTransmission() returns 0 only on that acknowledge.
+    Wire.beginTransmission(address);
+    return Wire.endTransmission() == 0;
+}
