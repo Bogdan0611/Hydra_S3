@@ -50,6 +50,7 @@ rather than worked around.
     │   └── ir_transceiver.*
     └── apps/                  # one folder per menu app
         ├── app.h              # common App interface
+        ├── placeholder/       # stand-in for apps of later stages
         ├── hardware_test/
         ├── subghz/
         ├── nfc/
