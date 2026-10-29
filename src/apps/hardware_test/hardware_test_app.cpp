@@ -10,16 +10,20 @@
 namespace {
 
 // Same order as CheckId
-const char* const CHECK_NAMES[] = {"OLED", "PN532", "SD card", "CC1101", "NRF24"};
+const char* const CHECK_NAMES[] = {"OLED",  "PN532",       "SD card", "CC1101",
+                                   "NRF24", "IR receiver", "Buzzer"};
 
 // Current CC1101 chips report 0x14, older ones 0x04.
 constexpr uint8_t CC1101_VERSION_CURRENT = 0x14;
 constexpr uint8_t CC1101_VERSION_OLD = 0x04;
 
+// One remote key press produces dozens of edges; stray light only a few.
+constexpr uint32_t IR_EDGES_FOR_PASS = 20;
+
 }  // namespace
 
-HardwareTestApp::HardwareTestApp(DisplayManager& display, StorageManager& storage)
-    : display_(display), storage_(storage) {
+HardwareTestApp::HardwareTestApp(DisplayManager& display, StorageManager& storage, Buzzer& buzzer)
+    : display_(display), storage_(storage), buzzer_(buzzer) {
     static_assert(sizeof(CHECK_NAMES) / sizeof(CHECK_NAMES[0]) == CheckCount,
                   "CHECK_NAMES must have one name per CheckId");
     for (size_t i = 0; i < CheckCount; i++) {
@@ -35,7 +39,11 @@ const char* HardwareTestApp::name() const {
 bool HardwareTestApp::onEnter() {
     display_.showMessage("Hardware Test", "Running checks...", "");
     Serial.println("[INFO] Hardware test: running checks");
-    runChecks();
+    runAutomaticChecks();
+
+    // These two need the user, so they stay WAIT until the user acts.
+    startIrCheck();
+    setResult(BuzzerTone, Status::Waiting, "Not tested yet", "OK plays a tone");
 
     list_.setItems(labels_, CheckCount);
     screen_ = Screen::Results;
@@ -43,10 +51,12 @@ bool HardwareTestApp::onEnter() {
     return true;
 }
 
-// Nothing to release: every check finishes inside runChecks().
-void HardwareTestApp::onExit() {}
+void HardwareTestApp::onExit() {
+    ir_.stopEdgeCount();
+}
 
 void HardwareTestApp::onLoop() {
+    updateIrCheck();
     if (!needsRedraw_) {
         return;
     }
@@ -55,15 +65,21 @@ void HardwareTestApp::onLoop() {
 }
 
 bool HardwareTestApp::onInput(InputEvent event) {
-    if (screen_ == Screen::Details) {
-        screen_ = Screen::Results;  // any button returns to the list
-        needsRedraw_ = true;
-        return true;
+    switch (screen_) {
+        case Screen::Results:
+            return handleResultsInput(event);
+        case Screen::Details:
+            screen_ = Screen::Results;  // any button returns to the list
+            break;
+        case Screen::BuzzerQuestion:
+            answerBuzzerQuestion(event);
+            break;
     }
-    return handleResultsInput(event);
+    needsRedraw_ = true;
+    return true;
 }
 
-void HardwareTestApp::runChecks() {
+void HardwareTestApp::runAutomaticChecks() {
     BusManager::logI2cDevices();
     checkI2cDevice(Oled, OLED_I2C_ADDRESS, "Check SDA/SCL wires");
     checkI2cDevice(Pn532, PN532_I2C_ADDRESS, "Set switches to I2C");
@@ -115,6 +131,37 @@ void HardwareTestApp::checkNrf24() {
     setResult(Nrf24, connected ? Status::Pass : Status::Fail, detail, "Check CSN, CE, 3V3");
 }
 
+void HardwareTestApp::startIrCheck() {
+    ir_.startEdgeCount();
+    if (ir_.isIdle()) {
+        setResult(IrReceiver, Status::Waiting, "Idle, no signal yet", "Press a remote key");
+    } else {
+        setResult(IrReceiver, Status::Fail, "Output stuck LOW", "Check VCC, GND, wire");
+    }
+}
+
+void HardwareTestApp::updateIrCheck() {
+    bool waiting = results_[IrReceiver].status == Status::Waiting;
+    if (!waiting || ir_.edgeCount() < IR_EDGES_FOR_PASS) {
+        return;
+    }
+    char detail[LINE_LENGTH];
+    snprintf(detail, sizeof(detail), "%lu edges received", ir_.edgeCount());
+    setResult(IrReceiver, Status::Pass, detail, "");
+}
+
+void HardwareTestApp::answerBuzzerQuestion(InputEvent event) {
+    if (event == InputEvent::Ok) {
+        setResult(BuzzerTone, Status::Pass, "Tone heard", "");
+    } else if (event == InputEvent::Back) {
+        setResult(BuzzerTone, Status::Fail, "No tone heard", "Check S wire, VCC");
+    } else {
+        buzzer_.success();  // any other button plays the tone again
+        return;
+    }
+    screen_ = Screen::Results;
+}
+
 // The hint is shown and logged only when the check did not pass.
 void HardwareTestApp::setResult(CheckId id, Status status, const char* detail, const char* hint) {
     CheckResult& result = results_[id];
@@ -136,7 +183,13 @@ bool HardwareTestApp::handleResultsInput(InputEvent event) {
         return false;
     }
     if (event == InputEvent::Ok) {
-        screen_ = Screen::Details;
+        // The buzzer row runs its check; every other row shows its details.
+        if (list_.selectedIndex() == BuzzerTone) {
+            buzzer_.success();
+            screen_ = Screen::BuzzerQuestion;
+        } else {
+            screen_ = Screen::Details;
+        }
         needsRedraw_ = true;
     } else if (list_.handleInput(event)) {
         needsRedraw_ = true;
@@ -145,13 +198,19 @@ bool HardwareTestApp::handleResultsInput(InputEvent event) {
 }
 
 void HardwareTestApp::draw() {
-    if (screen_ == Screen::Details) {
-        drawDetails();
-        return;
+    switch (screen_) {
+        case Screen::Results:
+            display_.clear();
+            list_.draw(display_);
+            display_.show();
+            break;
+        case Screen::Details:
+            drawDetails();
+            break;
+        case Screen::BuzzerQuestion:
+            display_.showMessage("Buzzer", "Did you hear a tone?", "OK = yes, BACK = no");
+            break;
     }
-    display_.clear();
-    list_.draw(display_);
-    display_.show();
 }
 
 void HardwareTestApp::drawDetails() {
@@ -168,6 +227,8 @@ const char* HardwareTestApp::statusText(Status status) {
             return "PASS";
         case Status::Fail:
             return "FAIL";
+        case Status::Waiting:
+            return "WAIT";
     }
     return "?";
 }

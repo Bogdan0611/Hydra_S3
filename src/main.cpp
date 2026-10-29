@@ -18,7 +18,7 @@ static Buzzer buzzer;
 static StorageManager storage;
 static AppManager appManager(display);
 
-static HardwareTestApp hardwareTestApp(display, storage);
+static HardwareTestApp hardwareTestApp(display, storage, buzzer);
 
 // Stand-ins for the apps of later stages; each is replaced when its stage starts.
 static PlaceholderApp subGhzApp(display, "Sub-GHz");
