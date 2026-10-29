@@ -22,6 +22,4 @@ private:
     DisplayManager& display_;
     const char* name_;
     bool needsRedraw_ = false;
-
-    void draw();
 };

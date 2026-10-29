@@ -58,6 +58,14 @@ void DisplayManager::drawTriangle(int x0, int y0, int x1, int y1, int x2, int y2
     u8g2_.drawTriangle(x0, y0, x1, y1, x2, y2);
 }
 
+void DisplayManager::showMessage(const char* title, const char* detail, const char* hint) {
+    clear();
+    drawCenteredText(20, title);
+    drawCenteredText(36, detail);
+    drawCenteredText(58, hint);
+    show();
+}
+
 void DisplayManager::show() {
     // Without an OLED every transfer would only produce I2C errors.
     if (!ready_) {

@@ -85,6 +85,8 @@ duplicating it.
 ```
 
 Each step logs `[OK] <component>` or `[ERROR] <component>: <reason>`.
+If a step failed, a notice replaces the menu until the next button press:
+a missing SD card is named, any other error points to the Serial log.
 
 ---
 

@@ -21,18 +21,10 @@ void PlaceholderApp::onLoop() {
     if (!needsRedraw_) {
         return;
     }
-    draw();
+    display_.showMessage(name_, "Coming soon", "BACK to return");
     needsRedraw_ = false;
 }
 
 bool PlaceholderApp::onInput(InputEvent event) {
     return event != InputEvent::Back;
-}
-
-void PlaceholderApp::draw() {
-    display_.clear();
-    display_.drawCenteredText(20, name_);
-    display_.drawCenteredText(36, "Coming soon");
-    display_.drawCenteredText(58, "BACK to return");
-    display_.show();
 }

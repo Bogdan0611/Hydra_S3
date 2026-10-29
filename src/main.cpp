@@ -40,13 +40,6 @@ static bool logMemory() {
     return true;
 }
 
-static void showBootScreen() {
-    display.clear();
-    display.drawCenteredText(28, "Hydra S3");
-    display.drawCenteredText(44, "Starting...");
-    display.show();
-}
-
 // Each component logs its own [OK] / [ERROR] line; this only counts the
 // failures. Returns the number of components that failed.
 static int bootComponents() {
@@ -55,7 +48,7 @@ static int bootComponents() {
         failures++;
     }
     if (display.begin()) {
-        showBootScreen();
+        display.showMessage("Hydra S3", "Starting...", "");
     } else {
         failures++;
     }
@@ -87,6 +80,16 @@ static void registerApps() {
     appManager.begin();
 }
 
+// The details of a boot error are only on Serial. The screen names the one
+// a user can fix on the spot (the SD card), or points to the log otherwise.
+static void showBootNotice(int failures) {
+    if (!storage.isReady()) {
+        appManager.showNotice("SD card unavailable", "Saving is disabled");
+    } else if (failures > 0) {
+        appManager.showNotice("Boot errors found", "See the Serial log");
+    }
+}
+
 void setup() {
     Serial.begin(SERIAL_BAUD);
     Serial.println();
@@ -94,6 +97,7 @@ void setup() {
 
     int failures = bootComponents();
     registerApps();
+    showBootNotice(failures);
     Serial.printf("[INFO] Boot finished with %d error(s)\n", failures);
 }
 

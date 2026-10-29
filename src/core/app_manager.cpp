@@ -22,12 +22,25 @@ void AppManager::begin() {
     Serial.printf("[OK] Menu: %zu apps\n", appCount_);
 }
 
+void AppManager::showNotice(const char* title, const char* detail) {
+    noticeTitle_ = title;
+    noticeDetail_ = detail;
+    needsRedraw_ = true;
+}
+
 void AppManager::handleInput(InputEvent event) {
     if (openApp_ != nullptr) {
         bool keepOpen = openApp_->onInput(event);
         if (!keepOpen) {
             closeOpenApp();
         }
+        return;
+    }
+
+    // The press that dismisses a notice must not also move the menu.
+    if (noticeTitle_ != nullptr) {
+        noticeTitle_ = nullptr;
+        needsRedraw_ = true;
         return;
     }
 
@@ -46,9 +59,11 @@ void AppManager::update() {
     if (!needsRedraw_) {
         return;
     }
-    display_.clear();
-    menu_.draw(display_);
-    display_.show();
+    if (noticeTitle_ != nullptr) {
+        display_.showMessage(noticeTitle_, noticeDetail_, "Press any button");
+    } else {
+        drawMenu();
+    }
     needsRedraw_ = false;
 }
 
@@ -71,4 +86,10 @@ void AppManager::closeOpenApp() {
     Serial.printf("[INFO] Menu: closed %s\n", openApp_->name());
     openApp_ = nullptr;
     needsRedraw_ = true;
+}
+
+void AppManager::drawMenu() {
+    display_.clear();
+    menu_.draw(display_);
+    display_.show();
 }

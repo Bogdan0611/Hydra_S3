@@ -22,6 +22,10 @@ public:
     /// Shows the menu. Call once, after every app has been added.
     void begin();
 
+    /// Shows a message in place of the menu until the next button press, which
+    /// only dismisses it. The strings are not copied (use string literals).
+    void showNotice(const char* title, const char* detail);
+
     /// Sends a press to the open app, or to the menu if no app is open.
     void handleInput(InputEvent event);
 
@@ -38,8 +42,11 @@ private:
     const char* appNames_[MAX_APPS] = {};
     size_t appCount_ = 0;
     App* openApp_ = nullptr;
+    const char* noticeTitle_ = nullptr;  // nullptr = no notice shown
+    const char* noticeDetail_ = nullptr;
     bool needsRedraw_ = false;
 
     void openSelectedApp();
     void closeOpenApp();
+    void drawMenu();
 };
