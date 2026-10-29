@@ -2,7 +2,9 @@
 
 #include <Arduino.h>
 
+#include "apps/placeholder/placeholder_app.h"
 #include "config.h"
+#include "core/app_manager.h"
 #include "core/bus_manager.h"
 #include "core/buzzer.h"
 #include "core/display_manager.h"
@@ -13,6 +15,17 @@ static DisplayManager display;
 static InputManager input;
 static Buzzer buzzer;
 static StorageManager storage;
+static AppManager appManager(display);
+
+// Stand-ins for the apps of later stages; each is replaced when its stage starts.
+static PlaceholderApp hardwareTestApp(display, "Hardware Test");
+static PlaceholderApp subGhzApp(display, "Sub-GHz");
+static PlaceholderApp nfcApp(display, "NFC");
+static PlaceholderApp infraredApp(display, "Infrared");
+static PlaceholderApp bleApp(display, "BLE");
+static PlaceholderApp wifiApp(display, "Wi-Fi");
+static PlaceholderApp nrf24App(display, "NRF24");
+static PlaceholderApp usbHidApp(display, "USB HID");
 
 // Returns false if the PSRAM was not detected.
 static bool logMemory() {
@@ -62,12 +75,25 @@ static int bootComponents() {
     return failures;
 }
 
+static void registerApps() {
+    appManager.addApp(hardwareTestApp);
+    appManager.addApp(subGhzApp);
+    appManager.addApp(nfcApp);
+    appManager.addApp(infraredApp);
+    appManager.addApp(bleApp);
+    appManager.addApp(wifiApp);
+    appManager.addApp(nrf24App);
+    appManager.addApp(usbHidApp);
+    appManager.begin();
+}
+
 void setup() {
     Serial.begin(SERIAL_BAUD);
     Serial.println();
     Serial.println("Booting...");
 
     int failures = bootComponents();
+    registerApps();
     Serial.printf("[INFO] Boot finished with %d error(s)\n", failures);
 }
 
@@ -75,7 +101,8 @@ void loop() {
     InputEvent event = input.poll();
     if (event != InputEvent::None) {
         buzzer.click();
-        Serial.printf("[INFO] Input event %d\n", static_cast<int>(event));
+        appManager.handleInput(event);
     }
+    appManager.update();
     buzzer.update();
 }

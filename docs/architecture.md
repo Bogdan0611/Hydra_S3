@@ -139,9 +139,10 @@ follow.
 ### 5.2 `DisplayManager`
 
 - **U8g2 full-buffer driver:** `U8G2_SSD1306_128X64_NONAME_F_HW_I2C`.
-- **Redraws only when state changes** (a dirty flag). A full frame is
-  ~1 KB over I2C; redrawing continuously would starve the PN532, which
-  shares the bus.
+- **Redraws only when state changes.** The menu and each app keep a
+  `needsRedraw_` flag and call `show()` only when it is set. A full frame
+  is ~1 KB over I2C (~25 ms at 400 kHz); redrawing continuously would
+  starve the PN532, which shares the bus.
 - **`drawText(x, y, text, inverted)`:** `inverted = true` draws with the
   pixels cleared (`setDrawColor(0)`), then restores the draw color.
 
