@@ -1,5 +1,7 @@
 # ESP32-S3 Hardware Multi-Tool
 
+[![Build](https://github.com/Bogdan0611/Hydra_S3/actions/workflows/build.yml/badge.svg)](https://github.com/Bogdan0611/Hydra_S3/actions/workflows/build.yml)
+
 A handheld hardware-security multi-tool in the spirit of Flipper Zero, built
 from discrete modules around an ESP32-S3. It covers Sub-GHz, NFC, infrared
 and 2.4 GHz, and adds what the ESP32-S3 brings on its own: native Wi-Fi,
