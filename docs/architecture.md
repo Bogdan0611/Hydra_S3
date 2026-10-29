@@ -256,7 +256,7 @@ build_flags =
 
 ; Libraries are added only when the stage that needs them starts.
 lib_deps =
-    olikraus/U8g2
+    olikraus/U8g2@^2.36.18
 ```
 
 - **Flashing and Serial use the COM port.** Native USB stays free for the
@@ -271,7 +271,7 @@ lib_deps =
 
 | Module | Library | `lib_deps` | Notes |
 |---|---|---|---|
-| OLED | U8g2 | `olikraus/U8g2` | — |
+| OLED | U8g2 | `olikraus/U8g2@^2.36.18` | — |
 | CC1101 | SmartRC-CC1101-Driver-Lib **3.0.2** | `lsatan/SmartRC-CC1101-Driver-Lib@^3.0.2` | Rewritten in 2026 with an object API (`SmartRC_CC1101 radio;`); 3.0.2 adds core 3.x compatibility. Header: `SmartRC_CC1101.h` |
 | PN532 | Adafruit PN532 | `adafruit/Adafruit PN532` | I2C mode, address `0x24` |
 | NRF24 | RF24 | `nrf24/RF24` | — |

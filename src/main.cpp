@@ -4,6 +4,9 @@
 
 #include "config.h"
 #include "core/bus_manager.h"
+#include "core/display_manager.h"
+
+static DisplayManager display;
 
 // Returns false if the PSRAM was not detected.
 static bool logMemory() {
@@ -18,11 +21,23 @@ static bool logMemory() {
     return true;
 }
 
+static void showBootScreen() {
+    display.clear();
+    display.drawCenteredText(28, "Hydra S3");
+    display.drawCenteredText(44, "Starting...");
+    display.show();
+}
+
 // Each component logs its own [OK] / [ERROR] line; this only counts the
 // failures. Returns the number of components that failed.
 static int bootComponents() {
     int failures = 0;
     if (!BusManager::begin()) {
+        failures++;
+    }
+    if (display.begin()) {
+        showBootScreen();
+    } else {
         failures++;
     }
     if (!logMemory()) {
