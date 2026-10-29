@@ -1,7 +1,10 @@
 name: Build
 
+# Stage branches are built through their pull request; building their pushes
+# as well would run every commit twice.
 on:
   push:
+    branches: [main]
   pull_request:
 
 jobs:

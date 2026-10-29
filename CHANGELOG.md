@@ -14,7 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 - Contribution guidelines, changelog and C++ formatting configuration.
 - PlatformIO project for the ESP32-S3 N16R8 on the pioarduino platform
   (Arduino-ESP32 core 3.3.9).
-- GitHub Actions build on every push and pull request.
+- GitHub Actions build on every pull request and every push to `main`.
 - Boot log with an `[OK]` / `[ERROR]` line per component, free heap and
   PSRAM, and an error count.
 - Core firmware: pin map, I2C/SPI startup, OLED display manager,

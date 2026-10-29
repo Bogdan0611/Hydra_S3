@@ -28,8 +28,9 @@ remotes, cards, networks and computers.
 **Scope:**
 - **Repository:** `platformio.ini`, `.gitignore`, `.clang-format`,
   `README.md`, `CONTRIBUTING.md`, `CHANGELOG.md`.
-- **CI:** a GitHub Actions workflow that runs `pio run` on every push and
-  pull request, with a build-status badge in the README.
+- **CI:** a GitHub Actions workflow that runs `pio run` on every pull
+  request and every push to `main`, with a build-status badge in the
+  README.
 - **Firmware:** `include/pins.h`, `include/config.h`, everything in
   `src/core/` (see `docs/architecture.md`), and an empty placeholder app in
   the menu.
