@@ -112,14 +112,26 @@ void HardwareTestApp::checkSdCard() {
 
 void HardwareTestApp::checkCc1101() {
     uint8_t version = 0;
-    if (!cc1101_.readVersion(version)) {
-        setResult(Cc1101, Status::Fail, "No answer (MISO high)", "Check CSN, MISO, 3V3");
+    if (cc1101_.readVersion(version)) {
+        // The chip signalled ready, so CSN and MISO work; a wrong value points
+        // at the lines that carry the request.
+        char detail[LINE_LENGTH];
+        snprintf(detail, sizeof(detail), "VERSION 0x%02X", version);
+        bool known = version == CC1101_VERSION_CURRENT || version == CC1101_VERSION_OLD;
+        setResult(Cc1101, known ? Status::Pass : Status::Fail, detail, "Check SCK, MOSI wires");
         return;
     }
-    char detail[LINE_LENGTH];
-    snprintf(detail, sizeof(detail), "VERSION 0x%02X", version);
-    bool known = version == CC1101_VERSION_CURRENT || version == CC1101_VERSION_OLD;
-    setResult(Cc1101, known ? Status::Pass : Status::Fail, detail, "Check CSN, MISO, 3V3");
+
+    // No answer on SPI. The power-on clock on GDO0 tells a chip that runs but
+    // cannot be reached apart from one that is not running at all.
+    uint32_t edges = 0;
+    bool running = cc1101_.isPowerOnClockPresent(edges);
+    Serial.printf("[INFO] CC1101: %lu edges on GDO0 in 2 ms (power-on clock)\n", edges);
+    if (running) {
+        setResult(Cc1101, Status::Fail, "Runs, no SPI reply", "Check CSN, MISO wires");
+    } else {
+        setResult(Cc1101, Status::Fail, "No sign of life", "Check 3V3, GND, GDO0");
+    }
 }
 
 void HardwareTestApp::checkNrf24() {

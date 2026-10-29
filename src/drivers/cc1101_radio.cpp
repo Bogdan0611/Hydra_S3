@@ -19,6 +19,12 @@ constexpr uint8_t READ_BURST = 0xC0;
 
 constexpr uint32_t READY_TIMEOUT_US = 1000;
 
+// After power-on IOCFG0 is 0x3F: GDO0 outputs CLK_XOSC/192, ~135 kHz with
+// the module's 26 MHz crystal. That is ~540 edges in 2 ms; a pin without the
+// clock shows none.
+constexpr uint32_t CLOCK_SAMPLE_US = 2000;
+constexpr uint32_t CLOCK_MIN_EDGES = 100;
+
 }  // namespace
 
 bool Cc1101Radio::readVersion(uint8_t& version) {
@@ -34,6 +40,24 @@ bool Cc1101Radio::readVersion(uint8_t& version) {
     digitalWrite(PIN_CC1101_CSN, HIGH);
     SPI.endTransaction();
     return ready;
+}
+
+bool Cc1101Radio::isPowerOnClockPresent(uint32_t& edgesCounted) {
+    // The pull-down keeps a disconnected pin from picking up noise as edges.
+    pinMode(PIN_CC1101_GDO0, INPUT_PULLDOWN);
+    edgesCounted = 0;
+
+    // Polling samples far faster than the 7.4 us clock period, so no edge is missed.
+    int lastLevel = digitalRead(PIN_CC1101_GDO0);
+    uint32_t startUs = micros();
+    while (micros() - startUs < CLOCK_SAMPLE_US) {
+        int level = digitalRead(PIN_CC1101_GDO0);
+        if (level != lastLevel) {
+            edgesCounted++;
+            lastLevel = level;
+        }
+    }
+    return edgesCounted >= CLOCK_MIN_EDGES;
 }
 
 // After CSN goes LOW, the CC1101 holds MISO HIGH until its crystal oscillator
