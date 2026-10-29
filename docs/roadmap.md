@@ -37,11 +37,11 @@ remotes, cards, networks and computers.
 **Done when:**
 - [ ] The CI build is green on `main`.
 - [x] Boot prints `[OK]` / `[ERROR]` for every component on Serial.
-- [ ] The menu is navigable with the joystick; the selected row is readable
+- [x] The menu is navigable with the joystick; the selected row is readable
       (inverted text).
-- [ ] The list scrolls correctly with more than 5 (test) entries.
-- [ ] Short beep on key press, using the identified buzzer active level.
-- [ ] The SD card is detected and its folders are created; without a card
+- [x] The list scrolls correctly with more than 5 (test) entries.
+- [x] Short beep on key press, using the identified buzzer active level.
+- [x] The SD card is detected and its folders are created; without a card
       the menu still works.
 - [x] Free internal heap and PSRAM are printed at boot.
 
