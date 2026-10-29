@@ -7,10 +7,12 @@
 #include "core/buzzer.h"
 #include "core/display_manager.h"
 #include "core/input_manager.h"
+#include "core/storage_manager.h"
 
 static DisplayManager display;
 static InputManager input;
 static Buzzer buzzer;
+static StorageManager storage;
 
 // Returns false if the PSRAM was not detected.
 static bool logMemory() {
@@ -48,6 +50,10 @@ static int bootComponents() {
         failures++;
     }
     if (!buzzer.begin()) {
+        failures++;
+    }
+    // A missing SD card is logged and counted, but the firmware keeps running.
+    if (!storage.begin()) {
         failures++;
     }
     if (!logMemory()) {
