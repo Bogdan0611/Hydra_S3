@@ -29,6 +29,13 @@ constexpr uint32_t CLOCK_MIN_EDGES = 100;
 
 bool Cc1101Radio::readVersion(uint8_t& version) {
     SPI.beginTransaction(SPISettings(CC1101_SPI_CLOCK_HZ, MSBFIRST, SPI_MODE0));
+
+    // An SD card keeps driving MISO after its CS goes HIGH, until it receives
+    // a clock, and the SD library sends none. The ready check below reads MISO
+    // before any clock, so first clock one byte with every chip select HIGH to
+    // make the card release the line.
+    SPI.transfer(0xFF);
+
     digitalWrite(PIN_CC1101_CSN, LOW);
 
     bool ready = waitUntilReady();
