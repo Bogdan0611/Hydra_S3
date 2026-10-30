@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-10-30
+
+Stage 1: Hardware Test.
+
 ### Added
 
 - Hardware Test app: checks the OLED, PN532, SD card (mount and
@@ -40,5 +44,6 @@ Stage 0: Foundation.
 - SD card mounted only intermittently at 10 MHz on jumper wires; the SPI
   clock is now 4 MHz.
 
-[Unreleased]: https://github.com/Bogdan0611/Hydra_S3/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/Bogdan0611/Hydra_S3/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/Bogdan0611/Hydra_S3/releases/tag/v0.2.0
 [0.1.0]: https://github.com/Bogdan0611/Hydra_S3/releases/tag/v0.1.0

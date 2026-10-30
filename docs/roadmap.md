@@ -48,7 +48,7 @@ remotes, cards, networks and computers.
 
 ---
 
-## [ ] Stage 1 — Hardware Test app
+## [x] Stage 1 — Hardware Test app
 
 The first real app: checks every module and shows PASS or FAIL. Useful for
 debugging for the life of the project, and a good demo.
@@ -58,8 +58,8 @@ debugging for the life of the project, and a good demo.
 `docs/hardware.md`, section 6.
 
 **Done when:**
-- [ ] Every module shows PASS on screen and on Serial.
-- [ ] A deliberately disconnected module shows FAIL with a hint at the
+- [x] Every module shows PASS on screen and on Serial.
+- [x] A deliberately disconnected module shows FAIL with a hint at the
       cause (e.g. "PN532 not responding: check I2C mode switches").
 
 ---
