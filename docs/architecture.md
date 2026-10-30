@@ -200,9 +200,19 @@ serves the main menu and every app, so the fix lives in one place.
 - **Safe clocks on jumper wires:** ~4 MHz for CC1101, NRF24 and SD. At
   10 MHz the SD card mounted only intermittently on the bench (FAT volume
   not found). Raise them only after testing proves stability.
+- **The SD card holds MISO after it is deselected.** It keeps driving the
+  line after its CS goes HIGH, until it receives a clock, and the Arduino
+  SD library sends none. The CC1101 signals ready by pulling MISO LOW
+  before the first clock, so its VERSION read failed once the SD card had
+  been used. Fix: clock one `0xFF` byte with every CS HIGH before
+  selecting the CC1101 (`Cc1101Radio::readVersion()`). Verified on the
+  bench: without the byte the read failed, with it the chip returned
+  `0x14`.
 - **SmartRC-CC1101 manages SPI itself.** Call `setSpiPin()` before
-  `Init()`. Once the CC1101 and the SD card are both integrated, verify
-  explicitly that both still respond (init order may matter).
+  `Init()`. If it waits for the ready signal on MISO, as its older
+  versions did, it needs the same release byte (above). Once the CC1101
+  and the SD card are both integrated, verify explicitly that both still
+  respond.
 
 ### 6.2 I2C (OLED, PN532)
 

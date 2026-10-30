@@ -229,8 +229,10 @@ GDO2) are optional for most features and can be freed.
 - **Header (6 pins):** GND, MISO, CLK, MOSI, CS, **3V3**.
 - **On board:** the socket, two capacitors and four 10 kΩ pull-ups. No
   regulator and no level shifter.
-- **Supply: 3V3, direct.** Ideal for this design: it needs no 5 V and does
-  not hold the shared MISO line.
+- **Supply: 3V3, direct.** Ideal for this design: it needs no 5 V, and with
+  no level shifter the module itself does not hold the shared MISO line.
+  The card does, until it is clocked after deselect (see
+  `docs/architecture.md`, section 6.1).
 - **CS has a pull-up on the module.**
 - **Card:** FAT32 (or exFAT), ideally 32 GB or smaller.
 
