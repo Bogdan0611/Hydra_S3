@@ -48,3 +48,26 @@ bool BusManager::begin() {
     bool spiStarted = beginSpi();
     return i2cStarted && spiStarted;
 }
+
+bool BusManager::isI2cDevicePresent(uint8_t address) {
+    // An empty write: a present device acknowledges its address, then the
+    // transfer ends. endTransmission() returns 0 only on that acknowledge.
+    Wire.beginTransmission(address);
+    return Wire.endTransmission() == 0;
+}
+
+void BusManager::logI2cDevices() {
+    Serial.print("[INFO] I2C devices found:");
+    bool anyFound = false;
+    // 0x08-0x77 is the range for normal devices; the rest is reserved.
+    for (uint8_t address = 0x08; address <= 0x77; address++) {
+        if (isI2cDevicePresent(address)) {
+            Serial.printf(" 0x%02X", address);
+            anyFound = true;
+        }
+    }
+    if (!anyFound) {
+        Serial.print(" none");
+    }
+    Serial.println();
+}

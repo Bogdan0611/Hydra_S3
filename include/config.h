@@ -9,11 +9,15 @@ constexpr uint32_t SERIAL_BAUD = 115200;
 
 constexpr uint32_t I2C_CLOCK_HZ = 400000;
 
-// Kept low for jumper wires; raise it only after testing proves it stable
+// SPI clocks, kept low for jumper wires; raise them only after testing
+// proves them stable
 constexpr uint32_t SD_SPI_CLOCK_HZ = 4000000;
+constexpr uint32_t CC1101_SPI_CLOCK_HZ = 4000000;
+constexpr uint32_t NRF24_SPI_CLOCK_HZ = 4000000;
 
-// 7-bit address; some SSD1306 modules use 0x3D
+// 7-bit I2C addresses; some SSD1306 modules use 0x3D
 constexpr uint8_t OLED_I2C_ADDRESS = 0x3C;
+constexpr uint8_t PN532_I2C_ADDRESS = 0x24;
 
 // How long a button level must stay unchanged before it counts
 constexpr uint32_t BUTTON_DEBOUNCE_MS = 30;

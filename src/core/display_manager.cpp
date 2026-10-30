@@ -3,14 +3,13 @@
 #include "core/display_manager.h"
 
 #include <Arduino.h>
-#include <Wire.h>
 
 #include "config.h"
+#include "core/bus_manager.h"
 
 bool DisplayManager::begin() {
     // u8g2.begin() succeeds even with no OLED connected, so probe the address first.
-    Wire.beginTransmission(OLED_I2C_ADDRESS);
-    if (Wire.endTransmission() != 0) {
+    if (!BusManager::isI2cDevicePresent(OLED_I2C_ADDRESS)) {
         Serial.printf("[ERROR] Display: no answer at 0x%02X (check wiring, or try 0x3D)\n",
                       OLED_I2C_ADDRESS);
         return false;
